@@ -1,4 +1,4 @@
-# Companion Artificial Speaking Personal Electronic Robot (C.A.S.P.E.R)
+# Cognitive Adaptive Speech-enabled Personal Evolving Robot (C.A.S.P.E.R)
 
 import pyttsx3
 import speech_recognition as sr
@@ -9,13 +9,17 @@ import time
 import os
 
 # declaring casper
+
 class Assistant():
     def __init__(self, name, owner, wakeword):
         super().__init__()
         self.name=name
         self.owner=owner
+        self.wakeword=wakeword
         self.spkr = pyttsx3.init('sapi5')
         self.spkr.setProperty('rate', 160)
+        self.lstnr = sr.Recognizer()
+        self.mic = sr.Microphone()
         self.hr = datetime.now().hour
         self.mnt = datetime.now().minute
 
@@ -44,4 +48,27 @@ def speak(msg) :
     CASPER.spkr.say(msg)
     CASPER.spkr.runAndWait()
 
-wish()
+
+def wake() :
+    while True :
+        #os.system('cls')
+        print('Listening...')
+        try :
+            with CASPER.mic as source :
+                CASPER.lstnr.adjust_for_ambient_noise(source, duration=0.2)
+                audio = CASPER.lstnr.listen(source)
+                try :
+                    command = CASPER.lstnr.recognize_google(audio)
+                except :
+                    continue
+                #os.system('cls')
+                if CASPER.wakeword in command.lower() :
+                    wish()
+                    return
+                if 'snooze' in command.lower() :
+                    speak('ok, see ya !')
+                    os._exit(0)
+        except :
+            continue
+
+wake()
