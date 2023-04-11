@@ -32,9 +32,9 @@ def wish() :
         if hr==0 :
             hr=12
         mnt=CASPER.mnt
-        if(hr<12 and hr>0) :
+        if(CASPER.hr<12 and CASPER.hr>0) :
             msg=f"Good-morning {CASPER.owner}, {CASPER.name} here, it's {str(hr)}:{str(mnt)} AM"
-        elif(hr>=12 and hr<17) :
+        elif(CASPER.hr>=12 and CASPER.hr<17) :
             msg=f"Good-afternoon {CASPER.owner}, {CASPER.name} here, it's {str(hr)}:{str(mnt)} PM"
         else :
             msg=f"Good-evening {CASPER.owner}, {CASPER.name} here, it's {str(hr)}:{str(mnt)} PM"
