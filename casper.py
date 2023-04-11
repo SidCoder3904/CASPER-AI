@@ -51,7 +51,7 @@ def speak(msg) :
 
 def wake() :
     while True :
-        #os.system('cls')
+        os.system('cls')
         print('Listening...')
         try :
             with CASPER.mic as source :
@@ -61,14 +61,60 @@ def wake() :
                     command = CASPER.lstnr.recognize_google(audio)
                 except :
                     continue
-                #os.system('cls')
+                os.system('cls')
                 if CASPER.wakeword in command.lower() :
+                    if 'sleep' in command.lower() :
+                        speak('ok, see ya !')
+                        os._exit(0)
                     wish()
                     return
-                if 'snooze' in command.lower() :
-                    speak('ok, see ya !')
-                    os._exit(0)
+        except :
+            continue
+        
+def wake2() :
+    while True :
+        os.system('cls')
+        print('...')
+        try :
+            with CASPER.mic as source :
+                CASPER.lstnr.adjust_for_ambient_noise(source, duration=0.2)
+                audio = CASPER.lstnr.listen(source)
+                try :
+                    command = CASPER.lstnr.recognize_google(audio)
+                except :
+                    continue
+                os.system('cls')
+                if CASPER.wakeword in command.lower() :
+                    if 'sleep' in command.lower() :
+                        speak('ok, see ya !')
+                        os._exit(0)
+                    return
         except :
             continue
 
+def listen_cmd() :
+    while True :
+        os.system('cls')
+        print('Listening...')
+        try :
+            with sr.Microphone() as source :
+                CASPER.lstnr.adjust_for_ambient_noise(source, duration=0.2)
+                audio = CASPER.lstnr.listen(source)
+                try :
+                    command = CASPER.lstnr.recognize_google(audio)
+                except :
+                    continue
+                os.system('cls')
+                return command
+        except :
+            continue
+
+def respond(command) :
+    response = 'i cant answer yet. sorry'
+    speak(response)
+
 wake()
+while True :
+    wake2()
+    command = listen_cmd()
+    respond(command)
