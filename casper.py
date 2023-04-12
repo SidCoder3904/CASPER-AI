@@ -21,19 +21,18 @@ class Assistant(ctk.CTk):
         super().__init__()
 
         #defining properties
-
         self.name=name
         self.owner=owner
         self.wakeword=wakeword
         self.spkr = pyttsx3.init('sapi5')
-        self.spkr.setProperty('rate', 160)
+        self.spkr.setProperty('rate', 180)
         self.lstnr = sr.Recognizer()
         self.mic = sr.Microphone()
         self.hr = datetime.now().hour
         self.mnt = datetime.now().minute
 
         self.title("C.A.S.P.E.R")
-        self.geometry('1000x1000')
+        self.geometry('800x500')
         self.font='courier new'
 
         self.grid_columnconfigure(1, weight=1)
@@ -51,7 +50,8 @@ class Assistant(ctk.CTk):
             font=ctk.CTkFont(size=50, family=self.font))
         self.name_display.pack(pady=10, padx=10)
         
-        self.imag = ImageTk.PhotoImage(Image.open('C:/Users/DELL/Desktop/sid/projects/casper/costume1.png'))
+        self.imag = ImageTk.PhotoImage(
+            Image.open('C:/Users/DELL/Desktop/sid/projects/casper/costume1.png'))
         self.wake_button = ctk.CTkButton(
             master=self.frame,
             image=self.imag,
@@ -65,18 +65,22 @@ class Assistant(ctk.CTk):
         self.chat = ctk.CTkLabel(
             master = self.frame,
             corner_radius = 10,
-            height = 50,
+            height = 500,
             width = 500,
-            text = None,
+            text = '',
             justify='left',
-            anchor = 'w',
+            anchor = 'nw',
             font=ctk.CTkFont(size=15, family=self.font))
-        self.chat.place(relx=0, anchor='w') # move the text to the left side of frame
+        self.chat.place(relx=0, anchor='w')
         self.chat.place(x=0, y=0)
         self.chat.pack(padx=10, pady=10)
 
     # defining actions
     def welcome(self) :
+        ctk.set_appearance_mode('light')
+        self.wake_button.destroy()
+        self.chat.configure(fg_color = 'grey')
+        self.update()
         os.system('cls')
         hr=self.hr%12
         if hr==0 :
@@ -93,9 +97,8 @@ class Assistant(ctk.CTk):
         speak(msg)
 
     def listen_cmd(self) :
+        display('Listening...')
         while True :
-            os.system('cls')
-            print('Listening...')
             try :
                 with sr.Microphone() as source :
                     self.lstnr.adjust_for_ambient_noise(source, duration=0.2)
@@ -104,20 +107,13 @@ class Assistant(ctk.CTk):
                         command = self.lstnr.recognize_google(audio)
                     except :
                         continue
-                    os.system('cls')
                     return command
             except :
                 continue
         
     def passive(self) :
-        ctk.set_appearance_mode('light')
-        self.wake_button.destroy()
-        self.chat.configure(fg_color = 'grey')
-        self.update()
-        self.welcome()
+        display('...')
         while True :
-            os.system('cls')
-            print('...')
             try :
                 with self.mic as source :
                     self.lstnr.adjust_for_ambient_noise(source, duration=0.2)
@@ -126,7 +122,6 @@ class Assistant(ctk.CTk):
                         command = self.lstnr.recognize_google(audio)
                     except :
                         continue
-                    os.system('cls')
                     if self.wakeword in command.lower() :
                         if 'sleep' in command.lower() :
                             speak('ok, see ya !')
@@ -141,20 +136,27 @@ class Assistant(ctk.CTk):
         speak(response)
 
     def wake(self) :
+        self.welcome()
         while True :
             self.passive()
             command=self.listen_cmd()
             self.respond(command)
 
+# general actions
+
 def speak(msg) :
     txt=''
+    msg=msg+'\n'
     for i in msg :
-        txt+=i
-        CASPER.chat.configure(text=txt)
+        display(i)
         time.sleep(0.01)
-        CASPER.update()
     CASPER.spkr.say(msg)
     CASPER.spkr.runAndWait()
+
+def display(msg) :
+    txt=CASPER.chat.cget('text') + msg
+    CASPER.chat.configure(text=txt)
+    CASPER.update()
 
 #doing actions
 if __name__ == "__main__":
