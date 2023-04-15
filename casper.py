@@ -76,6 +76,20 @@ class Assistant(ctk.CTk):
         self.chat.pack(padx=10, pady=10)
 
     # defining actions
+    def display(self, msg) :
+        txt=self.chat.cget('text') + msg
+        self.chat.configure(text=txt)
+        self.update()
+
+    def speak(self, msg) :
+        txt=''
+        msg=msg+'\n'
+        for i in msg :
+            self.display(i)
+            time.sleep(0.01)
+        self.spkr.say(msg)
+        self.spkr.runAndWait()
+
     def welcome(self) :
         ctk.set_appearance_mode('light')
         self.wake_button.destroy()
@@ -94,10 +108,10 @@ class Assistant(ctk.CTk):
             msg=f"Good-afternoon {self.owner}, {self.name} here, it's {str(hr)}:{mnt} PM"
         else :
             msg=f"Good-evening {self.owner}, {self.name} here, it's {str(hr)}:{mnt} PM"
-        speak(msg)
+        self.speak(msg)
 
     def listen_cmd(self) :
-        display('Listening...')
+        self.display('Listening...')
         while True :
             try :
                 with sr.Microphone() as source :
@@ -112,7 +126,7 @@ class Assistant(ctk.CTk):
                 continue
         
     def passive(self) :
-        display('...')
+        self.display('...')
         while True :
             try :
                 with self.mic as source :
@@ -124,16 +138,16 @@ class Assistant(ctk.CTk):
                         continue
                     if self.wakeword in command.lower() :
                         if 'sleep' in command.lower() :
-                            speak('ok, see ya !')
+                            self.speak('ok, see ya !')
                             os._exit(0)
-                        speak("yes sir !")
+                        self.speak("yes sir !")
                         return
             except :
                 continue
 
     def respond(self, command) :
         response = 'i cant answer yet. sorry'
-        speak(response)
+        self.speak(response)
 
     def wake(self) :
         self.welcome()
@@ -142,23 +156,8 @@ class Assistant(ctk.CTk):
             command=self.listen_cmd()
             self.respond(command)
 
-# general actions
+#doing actions(mainloop)
 
-def speak(msg) :
-    txt=''
-    msg=msg+'\n'
-    for i in msg :
-        display(i)
-        time.sleep(0.01)
-    CASPER.spkr.say(msg)
-    CASPER.spkr.runAndWait()
-
-def display(msg) :
-    txt=CASPER.chat.cget('text') + msg
-    CASPER.chat.configure(text=txt)
-    CASPER.update()
-
-#doing actions
 if __name__ == "__main__":
     CASPER = Assistant('CASPER', 'Sid', 'casper')
     CASPER.mainloop()
