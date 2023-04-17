@@ -138,11 +138,11 @@ class Assistant(ctk.CTk):
                     except :
                         continue
                     if self.wakeword in command.lower() :
-                        if 'sleep' in command.lower() :
-                            self.speak('ok, see ya !')
-                            os._exit(0)
                         self.speak("yes sir !")
                         return
+                    if any(i in command.lower() for i in keyword.SLEEP) :
+                        self.speak('ok, see ya !')
+                        os._exit(0)
             except :
                 continue
 
@@ -155,33 +155,30 @@ class Assistant(ctk.CTk):
 
     def respond(self, command) :
         # send email
-        for i in keyword.EMAIL :
-            if i in command :
-                self.speak('to whom do you want to send a mail ?')
-                reciever = self.listen_cmd()
-                add_book = {
-                    'sid' : 'siddharthverma3904@gmail.com',
-                    'mom' : 'lavitavermapdd@gmail.com'}
-                for i in add_book :
-                    if i in reciever :
-                        reciever = add_book[i]
-                        self.speak('what do you want to send  ?')
-                        msg = self.listen_cmd()
-                        self.display(msg+'\n')
-                        mail(reciever, msg)
-                        return
-                speak('person not found in address book, sorry.')
-                return
+        if any(i in command for i in keyword.EMAIL) :
+            self.speak('to whom do you want to send a mail ?')
+            reciever = self.listen_cmd()
+            for i in keyword.add_book :
+                if i in reciever :
+                    reciever = keyword.add_book[i]
+                    self.speak('what do you want to send  ?')
+                    msg = self.listen_cmd()
+                    self.display(msg+'\n')
+                    mail(reciever, msg)
+                    return
+            speak('person not found in address book, sorry.')
             return
         else :
             speak('i have not been trained to answer this, sorry.')
-        
-
 
 # some keywords for prompts
 
 class keyword() :
     EMAIL=['email', 'mail', 'gmail']
+    add_book = {
+        'myself' : 'siddharthverma3904@gmail.com',
+        'mom' : 'lavitavermapdd@gmail.com'}
+    SLEEP=['sleep', 'snooze', 'shut down', 'bye']
 
 # define tasks
 
