@@ -155,22 +155,23 @@ class Assistant(ctk.CTk):
 
     def respond(self, command) :
         # send email
-        if any(keyword.EMAIL) in command :
-            self.speak('to whom do you want to send a mail ?')
-            reciever = self.listen_cmd()
-            add_book = {
-                'sid' : 'siddharthverma3904@gmail.com',
-                'single' : '2022csb1118@iitrpr.ac.in',
-                'mom' : 'lavitavermapdd@gmail.com'}
-            for i in add_book :
-                if i in reciever :
-                    reciever = add_book[i]
-                    self.speak('what do you want to send  ?')
-                    msg = self.listen_cmd()
-                    self.display(msg+'\n')
-                    mail(reciever, msg)
-                    return
-            speak('person not found in address book, sorry.')
+        for i in keyword.EMAIL :
+            if i in command :
+                self.speak('to whom do you want to send a mail ?')
+                reciever = self.listen_cmd()
+                add_book = {
+                    'sid' : 'siddharthverma3904@gmail.com',
+                    'mom' : 'lavitavermapdd@gmail.com'}
+                for i in add_book :
+                    if i in reciever :
+                        reciever = add_book[i]
+                        self.speak('what do you want to send  ?')
+                        msg = self.listen_cmd()
+                        self.display(msg+'\n')
+                        mail(reciever, msg)
+                        return
+                speak('person not found in address book, sorry.')
+                return
             return
         else :
             speak('i have not been trained to answer this, sorry.')
@@ -185,7 +186,7 @@ class keyword() :
 # define tasks
 
 def mail(reciever, msg) :
-    sender = "siddharthverma3904@gmail.com"
+    sender = 'siddharthverma3904@gmail.com'
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
     s.login(sender, 'mdgxbjotgvgujqem')
