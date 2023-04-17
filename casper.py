@@ -9,6 +9,7 @@ import time
 import os
 import customtkinter as ctk
 from PIL import Image, ImageTk
+import smtplib
 
 #setting up casper 
 
@@ -111,7 +112,7 @@ class Assistant(ctk.CTk):
         self.speak(msg)
 
     def listen_cmd(self) :
-        self.display('Listening...')
+        self.display('Listening...\n')
         while True :
             try :
                 with sr.Microphone() as source :
@@ -121,7 +122,7 @@ class Assistant(ctk.CTk):
                         command = self.lstnr.recognize_google(audio)
                     except :
                         continue
-                    return command
+                    return command.lower()
             except :
                 continue
         
@@ -145,10 +146,6 @@ class Assistant(ctk.CTk):
             except :
                 continue
 
-    def respond(self, command) :
-        response = 'i cant answer yet. sorry'
-        self.speak(response)
-
     def wake(self) :
         self.welcome()
         while True :
@@ -156,9 +153,48 @@ class Assistant(ctk.CTk):
             command=self.listen_cmd()
             self.respond(command)
 
-#doing actions(mainloop)
+    def respond(self, command) :
+        # send email
+        if any(keyword.EMAIL) in command :
+            self.speak('to whom do you want to send a mail ?')
+            reciever = self.listen_cmd()
+            add_book = {
+                'sid' : 'siddharthverma3904@gmail.com',
+                'single' : '2022csb1118@iitrpr.ac.in',
+                'mom' : 'lavitavermapdd@gmail.com'}
+            for i in add_book :
+                if i in reciever :
+                    reciever = add_book[i]
+                    self.speak('what do you want to send  ?')
+                    msg = self.listen_cmd()
+                    self.display(msg+'\n')
+                    mail(reciever, msg)
+                    return
+            speak('person not found in address book, sorry.')
+            return
+        else :
+            speak('i have not been trained to answer this, sorry.')
+        
 
-if __name__ == "__main__":
+
+# some keywords for prompts
+
+class keyword() :
+    EMAIL=['email', 'mail', 'gmail']
+
+# define tasks
+
+def mail(reciever, msg) :
+    sender = "siddharthverma3904@gmail.com"
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls()
+    s.login(sender, 'mdgxbjotgvgujqem')
+    s.sendmail(sender, reciever, msg)
+    s.quit()
+    CASPER.speak('mail sent !')
+
+# doing actions(mainloop)
+if __name__ == "__main__" :
     CASPER = Assistant('CASPER', 'Sid', 'casper')
     CASPER.mainloop()
     os.system('cls')
