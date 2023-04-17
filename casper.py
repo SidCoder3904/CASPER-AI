@@ -32,9 +32,10 @@ class Assistant(ctk.CTk):
         self.hr = datetime.now().hour
         self.mnt = datetime.now().minute
 
-        self.title("C.A.S.P.E.R")
+        self.title("C.A.S.P.E.R")  
         self.geometry('800x500')
         self.font='courier new'
+        self.iconbitmap('casper/casper.ico')
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
@@ -52,7 +53,7 @@ class Assistant(ctk.CTk):
         self.name_display.pack(pady=10, padx=10)
         
         self.imag = ImageTk.PhotoImage(
-            Image.open('C:/Users/DELL/Desktop/sid/projects/casper/costume1.png'))
+            Image.open('casper/costume1.png'))
         self.wake_button = ctk.CTkButton(
             master=self.frame,
             image=self.imag,
