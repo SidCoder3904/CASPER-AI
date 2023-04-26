@@ -1,5 +1,10 @@
 # (C.A.S.P.E.R) Cognitive Adaptive Speech-enabled Personal Evolving Robot 
-
+# FEATURES: 
+#   1, open/close apps
+#   2, send email 
+#   3, date/time/calendar 
+#   4, send messages/whatsapp
+#   5, 
 import pyttsx3
 import speech_recognition as sr
 from datetime import *
@@ -20,13 +25,14 @@ ctk.set_appearance_mode(bg_mode)
 ctk.set_default_color_theme('green')
 
 class Assistant(ctk.CTk):
-    def __init__(self, name, owner, wakeword):
+    def __init__(self, name, owner, wakeword, use_wakeword = True):
         super().__init__()
 
         #defining properties
         self.name=name
         self.owner=owner
         self.wakeword=wakeword
+        self.use_wakeword=use_wakeword
         self.spkr = pyttsx3.init('sapi5')
         self.spkr.setProperty('rate', 180)
         self.lstnr = sr.Recognizer()
@@ -141,13 +147,21 @@ class Assistant(ctk.CTk):
                     except :
                         continue
                     command = command.lower()
-                    if self.wakeword in command :
-                        self.display(':)')
+                    if self.use_wakeword :
+                        if any(i in command for i in self.wakeword) :
+                            self.display('\n')
+                            if any(i in command.lower() for i in keyword.SLEEP) :
+                                self.speak('ok, see ya !')
+                                os._exit(0)
+                            return command
+                    else :
+                        self.display('\n')
+                        if any(i in command.lower() for i in keyword.SLEEP) :
+                            self.speak('ok, see ya !')
+                            os._exit(0)
                         return command
-                    if any(i in command.lower() for i in keyword.SLEEP) :
-                        self.speak('ok, see ya !')
-                        os._exit(0)
             except :
+                print('bravo3')
                 continue
 
     def wake(self) :
@@ -163,7 +177,7 @@ class Assistant(ctk.CTk):
         elif any(i in command for i in keyword.APP) :
             app_open_close(command)
         else :
-            speak('i have not been trained to answer this, sorry.')
+            self.speak('i have not been trained to answer this, sorry.')
 
 # some keywords for prompts
 
@@ -186,6 +200,7 @@ class keyword() :
         ('google', 'chrome', 'goggle', ' net ', 'new tab', 'browser') : 'Google Chrome',
         ('settings', 'controls', 'setting') : 'Settings'}
     
+    WAKEWORD = ['casper', 'kasper', 'gasper', 'gaspar', 'kaspar', 'caspar', 'cantor', 'castor', 'caster'] #spell errors
     SLEEP = ['sleep', 'snooze', 'shut down', 'bye']
     APP_OPEN = ['open', 'play', 'run', 'start', 'launch']
     APP_CLOSE = ['close', 'kill', 'stop', 'end']
@@ -221,6 +236,7 @@ def app_open_close(command) :
             if any(k in command for k in j) :
                 try :
                     open(keyword.app_dir[j], match_closest=True)
+                    CASPER.speak(f'opening {keyword.app_dir[j]}')
                     return
                 except Exception as e :
                     CASPER.display('an error occured while opening !')
@@ -230,6 +246,7 @@ def app_open_close(command) :
             if any(k in command for k in j) :
                 try :
                     close(keyword.app_dir[j], match_closest=True)
+                    CASPER.speak(f'closing {keyword.app_dir[j]}')
                     return
                 except Exception as e :
                     CASPER.display('an error occured while closing !')
@@ -240,6 +257,6 @@ def app_open_close(command) :
 # doing actions(mainloop)
 
 if __name__ == "__main__" :
-    CASPER = Assistant('CASPER', 'Sid', 'casper')
+    CASPER = Assistant('CASPER', 'Sid', keyword.WAKEWORD)
     CASPER.mainloop()
     os.system('cls')
