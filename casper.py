@@ -2,14 +2,16 @@
 
 import pyttsx3
 import speech_recognition as sr
-import wikipedia as wk
-import webbrowser as web
 from datetime import *
 import time
-import os
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import smtplib
+from AppOpener import open, close
+# modules unused
+import wikipedia as wk
+import webbrowser as web
+import os
 
 #setting up casper 
 
@@ -126,8 +128,8 @@ class Assistant(ctk.CTk):
                     return command.lower()
             except :
                 continue
-        
-    def passive(self) :
+   
+    def start_listening(self) :
         self.display('...')
         while True :
             try :
@@ -138,9 +140,10 @@ class Assistant(ctk.CTk):
                         command = self.lstnr.recognize_google(audio)
                     except :
                         continue
-                    if self.wakeword in command.lower() :
-                        self.speak("yes sir !")
-                        return
+                    command = command.lower()
+                    if self.wakeword in command :
+                        self.display(':)')
+                        return command
                     if any(i in command.lower() for i in keyword.SLEEP) :
                         self.speak('ok, see ya !')
                         os._exit(0)
@@ -150,49 +153,83 @@ class Assistant(ctk.CTk):
     def wake(self) :
         self.welcome()
         while True :
-            self.passive()
-            command=self.listen_cmd()
+            command=self.start_listening()
             self.respond(command)
 
     def respond(self, command) :
         # send email
         if any(i in command for i in keyword.EMAIL) :
-            self.speak('to whom do you want to send a mail ?')
-            reciever = self.listen_cmd()
-            for i in keyword.add_book :
-                if i in reciever :
-                    reciever = keyword.add_book[i]
-                    self.speak('what do you want to send  ?')
-                    msg = self.listen_cmd()
-                    self.display(msg+'\n')
-                    mail(reciever, msg)
-                    return
-            speak('person not found in address book, sorry.')
-            return
+            mail()
+        elif any(i in command for i in keyword.APP) :
+            app_open_close(command)
         else :
             speak('i have not been trained to answer this, sorry.')
 
 # some keywords for prompts
 
 class keyword() :
-    EMAIL=['email', 'mail', 'gmail']
-    add_book = {
+    add_dir = {
         'myself' : 'siddharthverma3904@gmail.com',
-        'mom' : 'lavitavermapdd@gmail.com'}
-    SLEEP=['sleep', 'snooze', 'shut down', 'bye']
+        'mom' : 'lavitavermapdd@gmail.com',
+        'samarth' : '2022csb1118@iitrpr.ac.in',
+        'ojas' : '2022csb1099@iitrpr.ac.in'}
+    
+    app_dir = {
+        ('whatsapp', 'whats app', 'what app', 'what\'sapp') : 'WhatsApp',
+        ('spotify', 'music', 'song', 'songs') : 'Spotify',
+        ('vscode', 'v s code', 'vs code') : 'Visual Studio Code',
+        ('my folder', 'master folder', 'sid') : 'sid',
+        (' ppt ', 'powerpoint', 'power point') : 'PowerPoint',
+        ('canva', 'canve', 'canvas') : 'Canva',
+        (' ps ', ' p s ', 'photoshop', 'photo shop') : 'Adobe Photoshop',
+        ('youtube', 'utube', 'you tube', ' yt ', ' y t ') : 'YouTube',
+        ('google', 'chrome', 'goggle', ' net ', 'new tab', 'browser') : 'Google Chrome',
+        ('settings', 'controls', 'setting') : 'Settings'}
+    
+    SLEEP = ['sleep', 'snooze', 'shut down', 'bye']
+    APP_OPEN = ['open', 'play', 'run', 'start']
+    APP_CLOSE = ['close', 'kill']
+    APP = APP_OPEN + APP_CLOSE
+    EMAIL = ['email', 'mail', 'gmail']
 
 # define tasks
 
-def mail(reciever, msg) :
-    sender = 'siddharthverma3904@gmail.com'
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
-    s.login(sender, 'mdgxbjotgvgujqem')
-    s.sendmail(sender, reciever, msg)
-    s.quit()
-    CASPER.speak('mail sent !')
+# send mail
+def mail() :
+    CASPER.speak('to whom do you want to send a mail ?')
+    reciever = CASPER.listen_cmd()
+    for i in keyword.add_book :
+        if i in reciever :
+            reciever = keyword.add_dir[i]
+            CASPER.speak('what do you want to send  ?')
+            msg = CASPER.listen_cmd()
+            CASPER.display(msg+'\n')
+            sender = 'siddharthverma3904@gmail.com'
+            s = smtplib.SMTP('smtp.gmail.com', 587)
+            s.starttls()
+            s.login(sender, 'mdgxbjotgvgujqem')
+            s.sendmail(sender, reciever, msg)
+            s.quit()
+            CASPER.speak('mail sent !')
+            return
+    CASPER.display('person not found in address book, sorry.')
+    return
+    
+def app_open_close(command) :
+    if any(i in command for i in keyword.APP_OPEN) :
+        for j in keyword.app_dir :
+            if any(k in command for k in j) :
+                try :
+                    open(keyword.app_dir[j], match_closest=True)
+                    return
+                except Exception as e :
+                    CASPER.display('an error occured while opening !')
+                    print(e)
+    else :
+        CASPER.display('app not found, sorry.')
 
 # doing actions(mainloop)
+
 if __name__ == "__main__" :
     CASPER = Assistant('CASPER', 'Sid', 'casper')
     CASPER.mainloop()
