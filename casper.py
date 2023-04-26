@@ -187,8 +187,8 @@ class keyword() :
         ('settings', 'controls', 'setting') : 'Settings'}
     
     SLEEP = ['sleep', 'snooze', 'shut down', 'bye']
-    APP_OPEN = ['open', 'play', 'run', 'start']
-    APP_CLOSE = ['close', 'kill']
+    APP_OPEN = ['open', 'play', 'run', 'start', 'launch']
+    APP_CLOSE = ['close', 'kill', 'stop', 'end']
     APP = APP_OPEN + APP_CLOSE
     EMAIL = ['email', 'mail', 'gmail']
 
@@ -224,6 +224,15 @@ def app_open_close(command) :
                     return
                 except Exception as e :
                     CASPER.display('an error occured while opening !')
+                    print(e)
+    if any(i in command for i in keyword.APP_CLOSE) :
+        for j in keyword.app_dir :
+            if any(k in command for k in j) :
+                try :
+                    close(keyword.app_dir[j], match_closest=True)
+                    return
+                except Exception as e :
+                    CASPER.display('an error occured while closing !')
                     print(e)
     else :
         CASPER.display('app not found, sorry.')
