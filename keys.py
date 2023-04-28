@@ -27,3 +27,4 @@ class keyword :
     DATE = ['date', 'day', 'today']
     CAL = ['calendar', 'calender']
     DTC = TIME + DATE + CAL
+    JOKE = ['joke', 'laugh', 'funny']

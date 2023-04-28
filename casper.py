@@ -3,6 +3,7 @@
 #   1, open/close apps
 #   2, send email 
 #   3, date/time/calendar 
+#   4, jokes
 
 from keys import keyword
 import pyttsx3
@@ -14,6 +15,7 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import smtplib
 from AppOpener import open, close
+import pyjokes
 # modules unused
 import wikipedia as wk
 import webbrowser as web
@@ -180,6 +182,8 @@ class Assistant(ctk.CTk):
             app_open_close(command)
         elif any(i in command for i in keyword.DTC) :
             date_time(command)
+        elif any(i in command for i in keyword.JOKE) :
+            joke()
         else :
             self.speak('i have not been trained to answer this, sorry.')
 
@@ -262,6 +266,10 @@ def date_time(command) :
         display(calendar.month(int(today.strftime('%Y')), int(today.strftime('%m'))))
     else :
         display('i cant answer this query, sorry\n')
+
+def joke() :
+    joke = pyjokes.get_joke(language="en", category="all")
+    speak(joke + '\nHa Ha !')
 
 # doing actions(mainloop)
 
