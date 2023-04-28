@@ -175,7 +175,7 @@ class Assistant(ctk.CTk):
     def respond(self, command) :
         # send email
         if any(i in command for i in keyword.EMAIL) :
-            mail()
+            mail(command)
         elif any(i in command for i in keyword.APP) :
             app_open_close(command)
         elif any(i in command for i in keyword.DTC) :
@@ -186,25 +186,37 @@ class Assistant(ctk.CTk):
 # define tasks
 
 # send mail
-def mail() :
-    CASPER.speak('to whom do you want to send a mail ?')
-    reciever = CASPER.listen_cmd()
-    for i in keyword.add_book :
-        if i in reciever :
-            reciever = keyword.add_dir[i]
-            CASPER.speak('what do you want to send  ?')
-            msg = CASPER.listen_cmd()
-            CASPER.display(msg+'\n')
-            sender = 'siddharthverma3904@gmail.com'
-            s = smtplib.SMTP('smtp.gmail.com', 587)
-            s.starttls()
-            s.login(sender, 'mdgxbjotgvgujqem')
-            s.sendmail(sender, reciever, msg)
-            s.quit()
-            CASPER.speak('mail sent !')
-            return
-    CASPER.display('person not found in address book, sorry.')
-    return
+def mail(command) :
+    if any(i in command for i in keyword.add_dir) :
+        reciever = keyword.add_dir[i]
+        CASPER.speak('what do you want to send  ?')
+        msg = CASPER.listen_cmd()
+        CASPER.display(msg+'\n')
+        sender = 'siddharthverma3904@gmail.com'
+        s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.starttls()
+        s.login(sender, 'mdgxbjotgvgujqem')
+        s.sendmail(sender, reciever, msg)
+        s.quit()
+        CASPER.speak('mail sent !')
+    else :
+        CASPER.speak('to whom do you want to send a mail ?')
+        reciever = CASPER.listen_cmd()
+        for i in keyword.add_dir :
+            if i in reciever :
+                reciever = keyword.add_dir[i]
+                CASPER.speak('what do you want to send  ?')
+                msg = CASPER.listen_cmd()
+                CASPER.display(msg+'\n')
+                sender = 'siddharthverma3904@gmail.com'
+                s = smtplib.SMTP('smtp.gmail.com', 587)
+                s.starttls()
+                s.login(sender, 'mdgxbjotgvgujqem')
+                s.sendmail(sender, reciever, msg)
+                s.quit()
+                CASPER.speak('mail sent !')
+                return
+        CASPER.display('person not found in address book, sorry.')
     
 def app_open_close(command) :
     if any(i in command for i in keyword.APP_OPEN) :
