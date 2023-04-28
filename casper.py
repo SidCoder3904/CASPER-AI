@@ -3,11 +3,12 @@
 #   1, open/close apps
 #   2, send email 
 #   3, date/time/calendar 
-#   4, send messages/whatsapp
-#   5, 
+
+from keys import keyword
 import pyttsx3
 import speech_recognition as sr
 from datetime import *
+import calendar
 import time
 import customtkinter as ctk
 from PIL import Image, ImageTk
@@ -23,6 +24,7 @@ import os
 bg_mode = 'dark'
 ctk.set_appearance_mode(bg_mode)
 ctk.set_default_color_theme('green')
+
 
 class Assistant(ctk.CTk):
     def __init__(self, name, owner, wakeword, use_wakeword = True):
@@ -176,36 +178,10 @@ class Assistant(ctk.CTk):
             mail()
         elif any(i in command for i in keyword.APP) :
             app_open_close(command)
+        elif any(i in command for i in keyword.DTC) :
+            date_time(command)
         else :
             self.speak('i have not been trained to answer this, sorry.')
-
-# some keywords for prompts
-
-class keyword() :
-    add_dir = {
-        'myself' : 'siddharthverma3904@gmail.com',
-        'mom' : 'lavitavermapdd@gmail.com',
-        'samarth' : '2022csb1118@iitrpr.ac.in',
-        'ojas' : '2022csb1099@iitrpr.ac.in'}
-    
-    app_dir = {
-        ('whatsapp', 'whats app', 'what app', 'what\'sapp') : 'WhatsApp',
-        ('spotify', 'music', 'song', 'songs') : 'Spotify',
-        ('vscode', 'v s code', 'vs code') : 'Visual Studio Code',
-        ('my folder', 'master folder', 'sid') : 'sid',
-        (' ppt ', 'powerpoint', 'power point') : 'PowerPoint',
-        ('canva', 'canve', 'canvas') : 'Canva',
-        (' ps ', ' p s ', 'photoshop', 'photo shop') : 'Adobe Photoshop',
-        ('youtube', 'utube', 'you tube', ' yt ', ' y t ') : 'YouTube',
-        ('google', 'chrome', 'goggle', ' net ', 'new tab', 'browser') : 'Google Chrome',
-        ('settings', 'controls', 'setting') : 'Settings'}
-    
-    WAKEWORD = ['casper', 'kasper', 'gasper', 'gaspar', 'kaspar', 'caspar', 'cantor', 'castor', 'caster'] #spell errors
-    SLEEP = ['sleep', 'snooze', 'shut down', 'bye']
-    APP_OPEN = ['open', 'play', 'run', 'start', 'launch']
-    APP_CLOSE = ['close', 'kill', 'stop', 'end']
-    APP = APP_OPEN + APP_CLOSE
-    EMAIL = ['email', 'mail', 'gmail']
 
 # define tasks
 
@@ -253,6 +229,27 @@ def app_open_close(command) :
                     print(e)
     else :
         CASPER.display('app not found, sorry.')
+
+def date_time(command) :
+    if any(i in command for i in keyword.TIME) :
+        hr=CASPER.hr%12
+        if hr==0 :
+            hr=12
+        mnt=str(CASPER.mnt)
+        if(CASPER.mnt<10) :
+            mnt = '0'+str(mnt)
+        if(self.hr<12 and self.hr>0) :
+            CASPER.speak(f'its {str(hr)}:{mnt} AM.')
+        else :
+            CASPER.speak(f'its {str(hr)}:{mnt} PM.')
+    elif any(i in command for i in keyword.DATE) :
+        today = date.today()
+        date = today.strftime('%d %B, %Y, %A')
+        speak(f'today is {date}')
+    elif any(i in command for i in keyword.CALENDER) :
+        display(calendar.month(int(today.strftime('%Y')), int(today.strftime('%m'))))
+    else :
+        display('i cant answer this query, sorry\n')
 
 # doing actions(mainloop)
 
