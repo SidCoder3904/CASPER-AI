@@ -18,6 +18,9 @@ class keyword :
         ('settings', 'controls', 'setting') : 'Settings'}
     
     WAKEWORD = ['casper', 'kasper', 'gasper', 'gaspar', 'kaspar', 'caspar', 'cantor', 'castor', 'caster'] #spell errors
+    change_ww = ['change', 'convert', 'new', 'shift', 'edit', 'set']
+    disable_ww = ['dont', 'disable', 'don\'t', 'not', 'stop', 'do not', 'no']
+    enable_ww = ['use', 'enable', 'start']
     SLEEP = ['sleep', 'snooze', 'shut down', 'bye']
     APP_OPEN = ['open', 'play', 'run', 'start', 'launch']
     APP_CLOSE = ['close', 'kill', 'stop', 'end']

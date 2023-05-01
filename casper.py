@@ -4,6 +4,8 @@
 #   2, send email 
 #   3, date/time/calendar 
 #   4, jokes
+#   5, enable/disable/change wakeword
+#   6, 
 
 from keys import keyword
 import pyttsx3
@@ -56,7 +58,7 @@ class Assistant(ctk.CTk):
         self.frame = ctk.CTkFrame(
             master=self,
             corner_radius=10)
-        self.frame.pack(pady=20, padx=60, fill="both", expand=True)
+        self.frame.pack(pady=20, padx=60, fill="both", expand=False)
 
         self.name_display = ctk.CTkLabel(
             master=self.frame,
@@ -176,6 +178,11 @@ class Assistant(ctk.CTk):
 
     def respond(self, command) :
         # send email
+        if 'wakeword' in command :#change for change ww
+            if any(i in commnad for i in keyword.change_ww) :
+                change_ww()
+            else :
+                use_ww(command) 
         if any(i in command for i in keyword.EMAIL) :
             mail(command)
         elif any(i in command for i in keyword.APP) :
@@ -188,6 +195,26 @@ class Assistant(ctk.CTk):
             self.speak('i have not been trained to answer this, sorry.')
 
 # define tasks
+
+# wakeword usage
+def use_ww(command) :
+    if any(i in command for i in keyword.disable_ww) :
+        self.use_wakeword = False
+        self.speak('you can now call me without using a wakeword')
+    elif any(i in command for i in keyword.enable_ww) :
+        self.wakeword = True
+        self.speak(f'you can now call me by calling out \'{(self.wakeword).lower()}\'')
+    else :
+        self.speak('pardon me, please repeat')
+        self.listen_cmd()
+
+# change wakeword
+def change_ww() :
+    self.speak('what do u want to call me as ?')
+    display('speak only the wakeword...')
+    self.wakeword = (self.listen_cmd()).lower()
+    self.use_wakeword = True
+    self.speak(f'you can now call me by name: {self.wakeword}')
 
 # send mail
 def mail(command) :
@@ -261,7 +288,7 @@ def date_time(command) :
     elif any(i in command for i in keyword.DATE) :
         today = date.today()
         date = today.strftime('%d %B, %Y, %A')
-        speak(f'today is {date}')
+        CASPER.speak(f'today is {date}')
     elif any(i in command for i in keyword.CALENDER) :
         display(calendar.month(int(today.strftime('%Y')), int(today.strftime('%m'))))
     else :
@@ -269,7 +296,7 @@ def date_time(command) :
 
 def joke() :
     joke = pyjokes.get_joke(language="en", category="all")
-    speak(joke + '\nHa Ha !')
+    CASPER.speak(joke + '\nHa Ha !')
 
 # doing actions(mainloop)
 
