@@ -17,7 +17,9 @@ class keyword :
         ('google', 'chrome', 'goggle', ' net ', 'new tab', 'browser') : 'Google Chrome',
         ('settings', 'controls', 'setting') : 'Settings'}
     
-    WAKEWORD = ['casper', 'kasper', 'gasper', 'gaspar', 'kaspar', 'caspar', 'cantor', 'castor', 'caster'] #spell errors
+    WAKEWORD = ['casper', 'kasper', 'gasper', 'gaspar', 'kaspar',
+        'caspar', 'cantor', 'castor', 'caster', 'capital', 'despia', 'crystal'] #spell errors
+    ww = ['wakeword', 'wake word', 'fake word', 'fakeword', 'wake world', 'wakeworld', 'breakword', 'break word']
     change_ww = ['change', 'convert', 'new', 'shift', 'edit', 'set']
     disable_ww = ['dont', 'disable', 'don\'t', 'not', 'stop', 'do not', 'no']
     enable_ww = ['use', 'enable', 'start']

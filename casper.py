@@ -103,8 +103,11 @@ class Assistant(ctk.CTk):
         for i in msg :
             self.display(i)
             time.sleep(0.01)
-        self.spkr.say(msg)
-        self.spkr.runAndWait()
+        try :
+            self.spkr.say(msg)
+            self.spkr.runAndWait()
+        except KeyboardInterrupt() as e :
+            return
 
     def welcome(self) :
         ctk.set_appearance_mode('light')
@@ -178,12 +181,12 @@ class Assistant(ctk.CTk):
 
     def respond(self, command) :
         # send email
-        if 'wakeword' in command :#change for change ww
-            if any(i in commnad for i in keyword.change_ww) :
+        if any(i in command for i in keyword.ww) :#change for change ww
+            if any(i in command for i in keyword.change_ww) :
                 change_ww()
             else :
                 use_ww(command) 
-        if any(i in command for i in keyword.EMAIL) :
+        elif any(i in command for i in keyword.EMAIL) :
             mail(command)
         elif any(i in command for i in keyword.APP) :
             app_open_close(command)
@@ -199,22 +202,22 @@ class Assistant(ctk.CTk):
 # wakeword usage
 def use_ww(command) :
     if any(i in command for i in keyword.disable_ww) :
-        self.use_wakeword = False
-        self.speak('you can now call me without using a wakeword')
+        CASPER.use_wakeword = False
+        CASPER.speak('you can now call me without using a wakeword')
     elif any(i in command for i in keyword.enable_ww) :
-        self.wakeword = True
-        self.speak(f'you can now call me by calling out \'{(self.wakeword).lower()}\'')
+        CASPER.wakeword = True
+        CASPER.speak(f'you can now call me by calling out \'{(CASPER.wakeword).lower()}\'')
     else :
-        self.speak('pardon me, please repeat')
-        self.listen_cmd()
+        CASPER.speak('pardon me, please repeat')
+        CASPER.listen_cmd()
 
 # change wakeword
 def change_ww() :
-    self.speak('what do u want to call me as ?')
-    display('speak only the wakeword...')
-    self.wakeword = (self.listen_cmd()).lower()
-    self.use_wakeword = True
-    self.speak(f'you can now call me by name: {self.wakeword}')
+    CASPER.speak('what do u want to call me as ?')
+    CASPER.display('speak only the wakeword...')
+    CASPER.wakeword = (CASPER.listen_cmd()).lower()
+    CASPER.use_wakeword = True
+    CASPER.speak(f'you can now call me by name: {CASPER.wakeword}')
 
 # send mail
 def mail(command) :
