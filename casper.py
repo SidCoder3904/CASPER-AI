@@ -5,12 +5,12 @@
 #   3, date/time/calendar 
 #   4, jokes
 #   5, enable/disable/change wakeword
-#   6, 
+#   6, website open
 
 from keys import keyword
 import pyttsx3
 import speech_recognition as sr
-from datetime import *
+from datetime import date, datetime, time
 import calendar
 import time
 import customtkinter as ctk
@@ -18,10 +18,10 @@ from PIL import Image, ImageTk
 import smtplib
 from AppOpener import open, close
 import pyjokes
-# modules unused
-import wikipedia as wk
 import webbrowser as web
 import os
+# modules unused
+import wikipedia as wk
 
 #setting up casper 
 
@@ -65,13 +65,13 @@ class Assistant(ctk.CTk):
             text='C.A.S.P.E.R',
             font=ctk.CTkFont(size=50, family=self.font))
         self.name_display.pack(pady=10, padx=10)
-        
         self.imag = ImageTk.PhotoImage(
             Image.open('casper/costume1.png'))
+
         self.wake_button = ctk.CTkButton(
             master=self.frame,
             image=self.imag,
-            text=None,
+            text = None,
             font=(self.font, 80),
             fg_color='transparent',
             command=self.wake,
@@ -188,8 +188,11 @@ class Assistant(ctk.CTk):
                 use_ww(command) 
         elif any(i in command for i in keyword.EMAIL) :
             mail(command)
-        elif any(i in command for i in keyword.APP) :
-            app_open_close(command)
+        elif any(i in command for i in keyword.OPEN_CLOSE) :
+            if any(j in command for j in keyword.app_dir) :
+                app_open_close(command) #add web search 
+            elif any(j in command for j in keyword.website_dir) :
+                website_open(command)
         elif any(i in command for i in keyword.DTC) :
             date_time(command)
         elif any(i in command for i in keyword.JOKE) :
@@ -253,7 +256,7 @@ def mail(command) :
         CASPER.display('person not found in address book, sorry.')
     
 def app_open_close(command) :
-    if any(i in command for i in keyword.APP_OPEN) :
+    if any(i in command for i in keyword.OPEN) :
         for j in keyword.app_dir :
             if any(k in command for k in j) :
                 try :
@@ -263,7 +266,7 @@ def app_open_close(command) :
                 except Exception as e :
                     CASPER.display('an error occured while opening !')
                     print(e)
-    if any(i in command for i in keyword.APP_CLOSE) :
+    if any(i in command for i in keyword.CLOSE) :
         for j in keyword.app_dir :
             if any(k in command for k in j) :
                 try :
@@ -275,6 +278,20 @@ def app_open_close(command) :
                     print(e)
     else :
         CASPER.display('app not found, sorry.')
+
+def website_open(command) :
+    if any(i in command for i in keyword.OPEN) :
+        for j in keyword.website_dir :
+            if any(k in command for k in j) :
+                try :
+                    webbrowser.open_new_tab(keyword.website_dir[j])
+                    CASPER.speak(f'opening {keyword.website_dir[j]}')
+                    return
+                except Exception as e :
+                    CASPER.display('an error occured while opening !')
+                    print(e)
+    else :
+        CASPER.display('unable to open site, sorry.')
 
 def date_time(command) :
     if any(i in command for i in keyword.TIME) :
