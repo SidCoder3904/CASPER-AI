@@ -189,10 +189,12 @@ class Assistant(ctk.CTk):
         elif any(i in command for i in keyword.EMAIL) :
             mail(command)
         elif any(i in command for i in keyword.OPEN_CLOSE) :
-            if any(j in command for j in keyword.app_dir) :
-                app_open_close(command) #add web search 
-            elif any(j in command for j in keyword.website_dir) :
-                website_open(command)
+            for j in keyword.app_dir :
+                if any(k in command for k in j) :
+                    app_open_close(command) #add web search 
+            for j in keyword.website_dir :
+                if any(k in command for k in j) :
+                    website_open(command)
         elif any(i in command for i in keyword.DTC) :
             date_time(command)
         elif any(i in command for i in keyword.JOKE) :
@@ -284,8 +286,8 @@ def website_open(command) :
         for j in keyword.website_dir :
             if any(k in command for k in j) :
                 try :
-                    webbrowser.open_new_tab(keyword.website_dir[j])
-                    CASPER.speak(f'opening {keyword.website_dir[j]}')
+                    web.open_new_tab(keyword.website_dir[j])
+                    CASPER.speak(f'opening {j[0]}')
                     return
                 except Exception as e :
                     CASPER.display('an error occured while opening !')
