@@ -1,0 +1,1 @@
+An offline Personal AI Assistant performs routine computer tasks without internet dependency. It assists with basic queries. It adapts to user preferences, aids in task automation, and offers personalized support for seamless daily computer operations, enhancing productivity.
