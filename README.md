@@ -15,7 +15,7 @@ CASPER is an offline Personal AI Assistant designed to help with daily tasks wit
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/CASPER-AI.git
+    git clone https://github.com/SidCoder3904/CASPER-AI.git
     cd CASPER-AI
     ```
 
